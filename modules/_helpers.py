@@ -266,7 +266,7 @@ def get_file_type(file):
 
 def generate_thumbnail(in_filename, out_filename):
     """gen thumb for video"""
-    
+
     try:
         probe = ffmpeg.probe(in_filename)
         time = 2

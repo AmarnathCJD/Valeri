@@ -1,4 +1,3 @@
-from telethon import Button
 import os
 import re
 import sys
@@ -7,9 +6,9 @@ from os import environ, execle, listdir, path, remove, system
 
 import speedtest
 import tinytag
-from telethon import events, types
+from telethon import Button, events, types
 
-from ._config import bot, StartTime
+from ._config import StartTime, bot
 from ._handler import auth_only, master_only, new_cmd, newIn
 from ._helpers import (
     generate_thumbnail,
@@ -73,8 +72,7 @@ def is_bl(code):
 async def _ls(e):
     try:
         directory = e.text.split(" ", 1)[1]
-        directory = directory + \
-            "/" if not directory.endswith("/") else directory
+        directory = directory + "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     contents = listdir(directory)
@@ -123,8 +121,7 @@ async def _ls(e):
 async def _cd(e):
     try:
         directory = e.text.split(" ", 1)[1]
-        directory = directory + \
-            "/" if not directory.endswith("/") else directory
+        directory = directory + "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     if not path.isdir(directory):
@@ -149,8 +146,7 @@ async def _rm(e):
     # list files as buttons
     try:
         directory = e.text.split(" ", 1)[1]
-        directory = directory + \
-            "/" if not directory.endswith("/") else directory
+        directory = directory + "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     contents = listdir(directory)
@@ -175,8 +171,7 @@ async def _rm(e):
 async def _rm_cbq_xedit(e):
     try:
         directory = e.data.decode().split(" ", 1)[1]
-        directory = directory + \
-            "/" if not directory.endswith("/") else directory
+        directory = directory + "/" if not directory.endswith("/") else directory
     except IndexError:
         directory = "./"
     contents = listdir(directory)
@@ -270,8 +265,7 @@ async def _upl(e):
         return await e.reply("No input file/folder specified.")
     _files = []
     _needed_ext = (
-        args.get("ext", None) or args.get(
-            "e", None) or args.get("extension", None)
+        args.get("ext", None) or args.get("e", None) or args.get("extension", None)
     )
     if os.path.isdir(_l):
         for f in os.listdir(_l):
@@ -298,8 +292,7 @@ async def _upl(e):
         )
 
         _files.append(
-            {"path": _l, "name": _file_name,
-                "name_without_ext": _file_name_without_ext}
+            {"path": _l, "name": _file_name, "name_without_ext": _file_name_without_ext}
         )
 
     if not _files:
@@ -372,8 +365,7 @@ async def _upl(e):
             _percent = ((_progress) / _total) * 100
             if _percent % 10 == 0:
                 await message.edit(
-                    "Uploaded {}% of ({}/{}) files.".format(_percent,
-                                                            _progress, _total)
+                    "Uploaded {}% of ({}/{}) files.".format(_percent, _progress, _total)
                 )
 
         else:
@@ -545,8 +537,7 @@ async def _auth(e):
     user, _ = await get_user(e)
     if is_auth(user.id):
         await e.reply(
-            "<b>{}</b> is already authorized.".format(
-                get_mention(user, "html")),
+            "<b>{}</b> is already authorized.".format(get_mention(user, "html")),
             parse_mode="html",
         )
         return

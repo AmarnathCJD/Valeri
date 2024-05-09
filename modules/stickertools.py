@@ -3,14 +3,19 @@ import os
 from os import remove, rename
 
 from requests import get, post
+from telethon import types as t
 from telethon.tl.functions import stickers
+from telethon.tl.functions.messages import (
+    GetCustomEmojiDocumentsRequest,
+    GetStickerSetRequest,
+)
+from telethon.tl.functions.stickers import (
+    AddStickerToSetRequest,
+    CreateStickerSetRequest,
+)
 
 from ._config import bot
 from ._handler import new_cmd
-from telethon.tl.functions.messages import GetCustomEmojiDocumentsRequest
-from telethon.tl.functions.messages import GetStickerSetRequest
-from telethon.tl.functions.stickers import CreateStickerSetRequest, AddStickerToSetRequest
-from telethon import types as t
 
 
 async def run_cmd(cmd):
@@ -82,8 +87,7 @@ async def _animate(msg):
         return await mg.edit(str(err))
     similarize_image(f)
     await run_cmd(
-        FFMPEG_COMMAND.format(f, color_f, f, color_f,
-                              "{}-anim.mp4".format(msg.id))
+        FFMPEG_COMMAND.format(f, color_f, f, color_f, "{}-anim.mp4".format(msg.id))
     )
     await msg.respond(file="{}-anim.mp4".format(msg.id))
     await mg.delete()
@@ -178,31 +182,35 @@ async def q_s(e):
         _j = 0
         for j in doc:
             doc_inp = t.InputDocument(
-                id=j.id, access_hash=j.access_hash, file_reference=j.file_reference)
+                id=j.id, access_hash=j.access_hash, file_reference=j.file_reference
+            )
             if _i == 1 and _j == 0:
-                s = await bot(CreateStickerSetRequest(
-                    user_id=e.sender,
-                    title=e.sender.first_name+" CustomWebm",
-                    short_name=shortname,
-                    stickers=[
-                        t.InputStickerSetItem(
-                            document=doc_inp,
-                            emoji="🤍",
-                        )
-                    ],
-                ))
+                s = await bot(
+                    CreateStickerSetRequest(
+                        user_id=e.sender,
+                        title=e.sender.first_name + " CustomWebm",
+                        short_name=shortname,
+                        stickers=[
+                            t.InputStickerSetItem(
+                                document=doc_inp,
+                                emoji="🤍",
+                            )
+                        ],
+                    )
+                )
                 _j += 1
                 continue
 
-            s = await bot(AddStickerToSetRequest(
-                stickerset=t.InputStickerSetShortName(
-                    shortname),
-                sticker=t.InputStickerSetItem(
-                    document=doc_inp,
-                    emoji="🤍",
+            s = await bot(
+                AddStickerToSetRequest(
+                    stickerset=t.InputStickerSetShortName(shortname),
+                    sticker=t.InputStickerSetItem(
+                        document=doc_inp,
+                        emoji="🤍",
+                    ),
                 )
-            ))
-            
-    await msg.edit(f"Stickers added to [{shortname}](https://t.me/addstickers/{shortname})")
+            )
 
-            
+    await msg.edit(
+        f"Stickers added to [{shortname}](https://t.me/addstickers/{shortname})"
+    )

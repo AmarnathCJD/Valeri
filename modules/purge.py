@@ -1,6 +1,7 @@
-from telethon.tl.functions.channels import GetParticipantRequest, DeleteMessagesRequest
+from telethon.tl.functions.channels import DeleteMessagesRequest, GetParticipantRequest
 from telethon.tl.types import ChannelParticipantAdmin, ChannelParticipantCreator
-from ._config import bot, OWNER_ID
+
+from ._config import OWNER_ID, bot
 from ._handler import new_cmd
 
 
@@ -21,7 +22,7 @@ async def can_purge(chat, user):
         return False
 
 
-@new_cmd(pattern='purge$')
+@new_cmd(pattern="purge$")
 async def purge(event):
     if not event.is_group:
         return
@@ -32,16 +33,18 @@ async def purge(event):
         till_id = event.reply_to_msg_id
     else:
         try:
-            args = event.text.split(' ', 1)[1]
+            args = event.text.split(" ", 1)[1]
             till_id = int(args)
         except:
             pass
 
     if till_id == 0:
-        await event.reply('Please reply to a message or provide a message id to purge till.')
+        await event.reply(
+            "Please reply to a message or provide a message id to purge till."
+        )
 
     try:
         req = DeleteMessagesRequest(event.chat_id, [i for i in range(till_id)])
         await bot(req)
     except Exception as e:
-        await event.reply(f'Failed to purge messages: {e}')
+        await event.reply(f"Failed to purge messages: {e}")
