@@ -10,8 +10,8 @@ from ._config import OWNER_ID
 from ._handler import new_cmd, newCall
 
 COMMAND_FOR_DL = "yt-dlp --downloader aria2c '{url}'"
-SERIES_BACKEND_URL = "https://6301-2-59-134-198.ngrok-free.app"
-SERVIO_TEMP = "https://8dc2d949f885aaa3a1a29df5cb09b89c.serveo.net"
+SERIES_BACKEND_URL = "https://e83f-68-183-237-158.ngrok-free.app"
+# SERVIO_TEMP = "https://8dc2d949f885aaa3a1a29df5cb09b89c.serveo.net"
 
 
 async def file_server():
@@ -382,7 +382,7 @@ async def download_x(e):
                     data=f"episode_{series_id}_{season_index}_{episode_index}_{category}_{season_index}_{episode_index}",
                 )
             ],
-            [Button.url("Index Link", f"{SERVIO_TEMP}")],
+            [Button.url("Index Link", f"Yada Yada Yada")],
         ],
     )
     await remove(f"{out_folder}/{out_filename}")

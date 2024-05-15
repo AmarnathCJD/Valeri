@@ -13,3 +13,5 @@ yt-dlp
 tinytag
 youtube-search-python
 pyppeteer
+aiofiles
+aiohttp
