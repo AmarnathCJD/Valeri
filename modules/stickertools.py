@@ -204,9 +204,9 @@ async def q_s(e):
                                     emoji="🤍",
                                 )
                             ],
-                            videos=j.mime_type == "video/webm",
-                            text_color=True,
-                            software="MissValeri_ENCODER",
+                            #videos=j.mime_type == "video/webm",
+                            #text_color=True,
+                            #software="MissValeri_ENCODER",
                         )
                     )
                     _j += 1
