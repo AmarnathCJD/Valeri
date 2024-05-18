@@ -4,18 +4,17 @@ from os import remove, rename
 
 from requests import get, post
 from telethon import types as t
+from telethon.errors import ShortNameOccupiedError
 from telethon.tl.functions import stickers
 from telethon.tl.functions.messages import (
     GetCustomEmojiDocumentsRequest,
     GetStickerSetRequest,
+    UploadMediaRequest,
 )
-from telethon.tl.functions.messages import UploadMediaRequest
 from telethon.tl.functions.stickers import (
     AddStickerToSetRequest,
     CreateStickerSetRequest,
 )
-
-from telethon.errors import ShortNameOccupiedError
 
 from ._config import bot
 from ._handler import new_cmd
@@ -90,8 +89,7 @@ async def _animate(msg):
         return await mg.edit(str(err))
     similarize_image(f)
     await run_cmd(
-        FFMPEG_COMMAND.format(f, color_f, f, color_f,
-                              "{}-anim.mp4".format(msg.id))
+        FFMPEG_COMMAND.format(f, color_f, f, color_f, "{}-anim.mp4".format(msg.id))
     )
     await msg.respond(file="{}-anim.mp4".format(msg.id))
     await mg.delete()
@@ -188,7 +186,7 @@ async def q_s(e):
             for j in doc:
                 if j.mime_type == "image/webp":
                     j = await resize_and_upload(j, 512, 512)
-                
+
                 doc_inp = t.InputDocument(
                     id=j.id, access_hash=j.access_hash, file_reference=j.file_reference
                 )
@@ -223,7 +221,9 @@ async def q_s(e):
                 )
     except ShortNameOccupiedError:
         return await msg.edit(
-            "Already kanged: [{}]({})".format("PACK", f"https://t.me/addstickers/{shortname}")
+            "Already kanged: [{}]({})".format(
+                "PACK", f"https://t.me/addstickers/{shortname}"
+            )
         )
     except Exception as e:
         return await msg.edit(str(e))
@@ -231,33 +231,34 @@ async def q_s(e):
     await msg.edit(
         f"Stickers added to [{shortname}](https://t.me/addstickers/{shortname})"
     )
-    
-from PIL import Image as PIL
+
+
 import os
 
-async def resize_and_upload(file, W, H):    
+from PIL import Image as PIL
+
+
+async def resize_and_upload(file, W, H):
     file_dl = await bot.download_media(file)
     im = PIL.open(file_dl)
     im = im.resize((W, H))
-    
+
     im.save(file_dl.replace(".webp", "_resized.webp"), "WEBP")
-    
+
     file = await bot.upload_file(file_dl.replace(".webp", "_resized.webp"))
-    
+
     file_media = await bot(
         UploadMediaRequest(
             media=t.InputMediaUploadedDocument(
                 file=file,
                 mime_type="image/webp",
-                attributes=[t.DocumentAttributeFilename("sticker.webp")]
+                attributes=[t.DocumentAttributeFilename("sticker.webp")],
             ),
-            peer=t.InputPeerSelf()
+            peer=t.InputPeerSelf(),
         )
     )
-    
+
     os.remove(file_dl)
     os.remove(file_dl.replace(".webp", "_resized.webp"))
-    
+
     return file_media.document
-    
-    
