@@ -9,10 +9,13 @@ from telethon.tl.functions.messages import (
     GetCustomEmojiDocumentsRequest,
     GetStickerSetRequest,
 )
+from telethon.tl.functions.messages import UploadMediaRequest
 from telethon.tl.functions.stickers import (
     AddStickerToSetRequest,
     CreateStickerSetRequest,
 )
+
+from telethon.errors import ShortNameOccupiedError
 
 from ._config import bot
 from ._handler import new_cmd
@@ -87,7 +90,8 @@ async def _animate(msg):
         return await mg.edit(str(err))
     similarize_image(f)
     await run_cmd(
-        FFMPEG_COMMAND.format(f, color_f, f, color_f, "{}-anim.mp4".format(msg.id))
+        FFMPEG_COMMAND.format(f, color_f, f, color_f,
+                              "{}-anim.mp4".format(msg.id))
     )
     await msg.respond(file="{}-anim.mp4".format(msg.id))
     await mg.delete()
@@ -164,7 +168,7 @@ async def _kang(message):
     await message.reply("Kang is not implemented yet.")
 
 
-@new_cmd(pattern="kangemoji")
+@new_cmd(pattern="ke")
 async def q_s(e):
     try:
         emoji_pack = e.text.split(None, 1)[1]
@@ -172,45 +176,88 @@ async def q_s(e):
         return await e.reply("Give me the emoji pack name")
     if "t.me" in emoji_pack:
         emoji_pack = emoji_pack.split("/")[-1]
-    shortname = emoji_pack + "e_to_m_by_missvaleri_bot"
+    shortname = emoji_pack + "{}e_to_m_by_missvaleri_bot".format(e.sender.id)
     s = await bot(GetStickerSetRequest(t.InputStickerSetShortName(emoji_pack), 0))
     _i = 0
     msg = await e.reply("Kanging emojis...")
-    for i in s.packs:
-        doc = await bot(GetCustomEmojiDocumentsRequest(i.documents))
-        _i += 1
-        _j = 0
-        for j in doc:
-            doc_inp = t.InputDocument(
-                id=j.id, access_hash=j.access_hash, file_reference=j.file_reference
-            )
-            if _i == 1 and _j == 0:
+    try:
+        for i in s.packs:
+            doc = await bot(GetCustomEmojiDocumentsRequest(i.documents))
+            _i += 1
+            _j = 0
+            for j in doc:
+                if j.mime_type == "image/webp":
+                    j = await resize_and_upload(j, 512, 512)
+                
+                doc_inp = t.InputDocument(
+                    id=j.id, access_hash=j.access_hash, file_reference=j.file_reference
+                )
+                if _i == 1 and _j == 0:
+                    s = await bot(
+                        CreateStickerSetRequest(
+                            user_id=e.sender,
+                            title=e.sender.first_name + " CustomWebm",
+                            short_name=shortname,
+                            stickers=[
+                                t.InputStickerSetItem(
+                                    document=doc_inp,
+                                    emoji="🤍",
+                                )
+                            ],
+                            videos=j.mime_type == "video/webm",
+                            text_color=True,
+                            software="MissValeri_ENCODER",
+                        )
+                    )
+                    _j += 1
+                    continue
+
                 s = await bot(
-                    CreateStickerSetRequest(
-                        user_id=e.sender,
-                        title=e.sender.first_name + " CustomWebm",
-                        short_name=shortname,
-                        stickers=[
-                            t.InputStickerSetItem(
-                                document=doc_inp,
-                                emoji="🤍",
-                            )
-                        ],
+                    AddStickerToSetRequest(
+                        stickerset=t.InputStickerSetShortName(shortname),
+                        sticker=t.InputStickerSetItem(
+                            document=doc_inp,
+                            emoji="🤍",
+                        ),
                     )
                 )
-                _j += 1
-                continue
-
-            s = await bot(
-                AddStickerToSetRequest(
-                    stickerset=t.InputStickerSetShortName(shortname),
-                    sticker=t.InputStickerSetItem(
-                        document=doc_inp,
-                        emoji="🤍",
-                    ),
-                )
-            )
+    except ShortNameOccupiedError:
+        return await msg.edit(
+            "Already kanged: [{}]({})".format("PACK", f"https://t.me/addstickers/{shortname}")
+        )
+    except Exception as e:
+        return await msg.edit(str(e))
 
     await msg.edit(
         f"Stickers added to [{shortname}](https://t.me/addstickers/{shortname})"
     )
+    
+from PIL import Image as PIL
+import os
+
+async def resize_and_upload(file, W, H):    
+    file_dl = await bot.download_media(file)
+    im = PIL.open(file_dl)
+    im = im.resize((W, H))
+    
+    im.save(file_dl.replace(".webp", "_resized.webp"), "WEBP")
+    
+    file = await bot.upload_file(file_dl.replace(".webp", "_resized.webp"))
+    
+    file_media = await bot(
+        UploadMediaRequest(
+            media=t.InputMediaUploadedDocument(
+                file=file,
+                mime_type="image/webp",
+                attributes=[t.DocumentAttributeFilename("sticker.webp")]
+            ),
+            peer=t.InputPeerSelf()
+        )
+    )
+    
+    os.remove(file_dl)
+    os.remove(file_dl.replace(".webp", "_resized.webp"))
+    
+    return file_media.document
+    
+    
