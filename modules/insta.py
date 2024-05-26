@@ -32,7 +32,7 @@ async def _insta(message):
         if media["type"] == "mp4":
             async with ClientSession(timeout=ClientTimeout(total=10)) as session:
                 async with session.get(media["url"]) as resp:
-                    filename = os.path.join(tmp_dir, media["url"].split("/")[-1])
+                    filename = os.path.join(tmp_dir, len(videos) + 1 + "insta.mp4")
                     with open(filename, "wb") as f:
                         f.write(await resp.read())
                         
