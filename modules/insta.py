@@ -1,6 +1,7 @@
 import os
 
 from aiohttp import ClientSession, ClientTimeout
+from requests import get
 
 from ._handler import new_cmd
 
@@ -30,13 +31,11 @@ async def _insta(message):
 
     for media in post_medias:
         if media["type"] == "mp4":
-            async with ClientSession(timeout=ClientTimeout(total=60)) as session:
-                async with session.get(media["url"]) as resp:
-                    filename = os.path.join(tmp_dir, str(len(videos) + 1) + "insta.mp4")
-                    with open(filename, "wb") as f:
-                        f.write(await resp.read())
-
-                    videos.append(filename)
+            filename = f"{tmp_dir}/{len(videos)}_insta.mp4"
+            with open(filename, "wb") as f:
+                f.write(get(media["url"], timeout=30).content)
+                
+            videos.append(filename)
         elif media["type"] == "jpg" or media["type"] == "png":
             images.append(media["url"])
         elif media["type"] == "webp":
