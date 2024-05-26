@@ -35,7 +35,7 @@ async def _insta(message):
             filename = f"{tmp_dir}/{len(videos)}_insta.mp4"
             with open(filename, "wb") as f:
                 f.write(get(media["url"], timeout=30).content)
-                
+
             videos.append(filename)
         elif media["type"] == "jpg" or media["type"] == "png":
             images.append(media["url"])
