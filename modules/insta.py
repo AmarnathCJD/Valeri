@@ -5,6 +5,11 @@ from requests import get
 
 from ._handler import new_cmd
 
+def download_file_as_stream(url: str, filename: str) -> None:
+    with open(filename, "wb") as f:
+        for chunk in get(url, stream=True).iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
 
 @new_cmd(pattern="(insta|instagram|instadl|instadownload)")
 async def _insta(message):
@@ -31,10 +36,8 @@ async def _insta(message):
 
     for media in post_medias:
         if media["type"] == "mp4":
-            print(media["url"])
             filename = f"{tmp_dir}/{len(videos)}_insta.mp4"
-            with open(filename, "wb") as f:
-                f.write(get(media["url"], timeout=30).content)
+            download_file_as_stream(media["url"], filename)
 
             videos.append(filename)
         elif media["type"] == "jpg" or media["type"] == "png":
