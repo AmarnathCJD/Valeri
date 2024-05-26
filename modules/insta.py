@@ -1,7 +1,8 @@
+import os
+
 from aiohttp import ClientSession, ClientTimeout
 
 from ._handler import new_cmd
-import os
 
 
 @new_cmd(pattern="(insta|instagram|instadl|instadownload)")
@@ -18,8 +19,7 @@ async def _insta(message):
         return await message.reply(f"**Error:**\n```{post_medias}```")
 
     if not post_medias:
-        return await message.reply("`No media found!`")\
-            
+        return await message.reply("`No media found!`")
     tmp_dir = "downloads"
     if not os.path.isdir(tmp_dir):
         os.makedirs(tmp_dir)
@@ -35,7 +35,7 @@ async def _insta(message):
                     filename = os.path.join(tmp_dir, media["url"].split("/")[-1])
                     with open(filename, "wb") as f:
                         f.write(await resp.read())
-                        
+
                     videos.append(filename)
         elif media["type"] == "jpg" or media["type"] == "png":
             images.append(media["url"])
