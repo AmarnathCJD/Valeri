@@ -30,6 +30,10 @@ async def _insta(message):
         elif media["type"] == "webp":
             stickers.append(media["url"])
 
+    print("Videos:", videos)
+    print("Images:", images)
+    print("Stickers:", stickers)
+
     caption_done = False
 
     if videos:
