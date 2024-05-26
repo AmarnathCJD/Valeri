@@ -177,7 +177,9 @@ async def q_s(e):
     shortname = emoji_pack + "{}e_to_m_by_missvaleri_bot".format(e.sender.id)
     s = await bot(GetStickerSetRequest(t.InputStickerSetShortName(emoji_pack), 0))
     _i = 0
-    msg = await e.reply("Kanging emojis... **[PACK](https://t.me/addstickers/{})**".format(shortname))
+    msg = await e.reply(
+        "Kanging emojis... **[PACK](https://t.me/addstickers/{})**".format(shortname)
+    )
     try:
         for i in s.packs:
             doc = await bot(GetCustomEmojiDocumentsRequest(i.documents))
