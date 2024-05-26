@@ -31,6 +31,7 @@ async def _insta(message):
 
     for media in post_medias:
         if media["type"] == "mp4":
+            print(media["url"])
             filename = f"{tmp_dir}/{len(videos)}_insta.mp4"
             with open(filename, "wb") as f:
                 f.write(get(media["url"], timeout=30).content)
