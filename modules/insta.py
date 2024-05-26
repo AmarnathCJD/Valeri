@@ -30,7 +30,7 @@ async def _insta(message):
 
     for media in post_medias:
         if media["type"] == "mp4":
-            async with ClientSession(timeout=ClientTimeout(total=10)) as session:
+            async with ClientSession(timeout=ClientTimeout(total=60)) as session:
                 async with session.get(media["url"]) as resp:
                     filename = os.path.join(tmp_dir, str(len(videos) + 1) + "insta.mp4")
                     with open(filename, "wb") as f:
