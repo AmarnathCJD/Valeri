@@ -1,4 +1,5 @@
 from aiohttp import ClientSession, ClientTimeout
+
 from ._handler import new_cmd
 
 
@@ -73,22 +74,24 @@ async def insta_dl(url: str):
                     if data.get("meta", {}).get("title"):
                         caption = data.get("meta", {}).get("title")
 
-                    post_medias.append({
-                        "url": data.get("url", {})[0].get("url"),
-                        "type": data.get("url", {})[0].get("type"),
-                    })
+                    post_medias.append(
+                        {
+                            "url": data.get("url", {})[0].get("url"),
+                            "type": data.get("url", {})[0].get("type"),
+                        }
+                    )
                 elif isinstance(data, list):
                     for i in data:
                         if i.get("meta", {}).get("title"):
                             caption = i.get("meta", {}).get("title")
 
-                        post_medias.append({
-                            "url": i.get("url", {})[0].get("url"),
-                            "type": i.get("url", {})[0].get("type"),
-                        })
+                        post_medias.append(
+                            {
+                                "url": i.get("url", {})[0].get("url"),
+                                "type": i.get("url", {})[0].get("type"),
+                            }
+                        )
 
                 return caption, post_medias, 0
             except Exception as e:
                 return data, e, -1
-
-

@@ -1,7 +1,8 @@
 import os
-from yt_dlp import YoutubeDL
-from subprocess import Popen, PIPE
+from subprocess import PIPE, Popen
+
 import requests
+from yt_dlp import YoutubeDL
 
 
 def gather_info(id: str):
@@ -16,8 +17,7 @@ def download_season():
     season_number = input("Enter the season number: ")
     series_title = input("Enter the series title: ")
 
-    season_number = "0" + \
-        season_number if len(season_number) == 1 else season_number
+    season_number = "0" + season_number if len(season_number) == 1 else season_number
     out_file_title = f"{series_title} - S{season_number}E(?).mkv"
 
     url = f"https://e83f-68-183-237-158.ngrok-free.app/api/episodes?id={
@@ -32,10 +32,19 @@ def download_season():
     ep_ids = []
     for i in ids:
         resp = get_embed_of_episode(i)
-        ep_ids.append({
-            "id": i,
-            "out_file": out_file_title.replace("(?)", "0" + str(ids.index(i) + 1) if len(str(ids.index(i) + 1)) == 1 else str(ids.index(i) + 1)),
-        })
+        ep_ids.append(
+            {
+                "id": i,
+                "out_file": out_file_title.replace(
+                    "(?)",
+                    (
+                        "0" + str(ids.index(i) + 1)
+                        if len(str(ids.index(i) + 1)) == 1
+                        else str(ids.index(i) + 1)
+                    ),
+                ),
+            }
+        )
 
     print("-> downloader - downloading season...")
     print("-> downloader - this may take a while...")
@@ -43,18 +52,23 @@ def download_season():
     i = 0
     for e in ep_ids:
         source_hash = requests.get(
-            f"https://e83f-68-183-237-158.ngrok-free.app/api/embed?id={e['id']}&cat=tv").json()["source_hash"]
+            f"https://e83f-68-183-237-158.ngrok-free.app/api/embed?id={e['id']}&cat=tv"
+        ).json()["source_hash"]
 
-        print("-> downloader - downloading ({}/{}): {}...".format(i +
-              1, len(ep_ids), e["out_file"]), end="\r")
-        
+        print(
+            "-> downloader - downloading ({}/{}): {}...".format(
+                i + 1, len(ep_ids), e["out_file"]
+            ),
+            end="\r",
+        )
+
         episode_info = gather_info(source_hash)
-        
+
         download_url(episode_info["file"], "downloads", e["out_file"])
         merge_subs(os.path.join("downloads", e["out_file"]), episode_info["subs"])
-        
+
         i += 1
-        
+
     print("-> downloader - done downloading season...")
 
 
@@ -92,20 +106,19 @@ def merge_subs(video_path, subs_paths):
 
     print("-> downloader - merging {} subs...".format(len(subs_paths)))
 
-    process = Popen(" ".join(ffmpeg_command),
-                    shell=True, stdout=PIPE, stderr=PIPE)
+    process = Popen(" ".join(ffmpeg_command), shell=True, stdout=PIPE, stderr=PIPE)
     process.communicate()
 
 
 def download_url(url, out_folder, out_filename):
     ydl_opts = {
-        'quiet': True,
-        'external_downloader': 'aria2c',
+        "quiet": True,
+        "external_downloader": "aria2c",
         # 'external_downloader_args': ['-x', '16'],
-        'outtmpl': os.path.join(out_folder, out_filename),
-        'verbose': False,
-        'addmetadata': True,
-        'no-warnings': True,
+        "outtmpl": os.path.join(out_folder, out_filename),
+        "verbose": False,
+        "addmetadata": True,
+        "no-warnings": True,
     }
 
     print("-> downloader - downloading video...")
