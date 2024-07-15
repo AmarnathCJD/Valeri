@@ -113,11 +113,11 @@ def merge_subs(video_path, subs_paths):
 def download_url(url, out_folder, out_filename):
     ydl_opts = {
         "quiet": True,
-        "external_downloader": "aria2c",
+        # "external_downloader": "aria2c",
         # 'external_downloader_args': ['-x', '16'],
         "outtmpl": os.path.join(out_folder, out_filename),
         "verbose": False,
-        "addmetadata": True,
+        # "addmetadata": True,
         "no-warnings": True,
     }
 
