@@ -1,7 +1,7 @@
 import requests
 
 from .bin import playplay_pb2
-from utils import rebuild_ogg, _get_track_id, beautify_out, get_track_url
+from .utils import rebuild_ogg, _get_track_id, beautify_out, get_track_url
 from const import refresh_token
 
 import subprocess
