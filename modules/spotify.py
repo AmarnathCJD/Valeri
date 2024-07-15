@@ -17,7 +17,7 @@ async def spotify(e):
         r"https://open.spotify.com/track/([a-zA-Z0-9]+)", track_id).group(1)
 
     
-    await e.reply('Downloading...')
+    msg = await e.reply('Downloading...')
     out = s.download(track_id)
     
     if out:
@@ -26,4 +26,5 @@ async def spotify(e):
         os.remove(out)
         
     else:
-        await e.reply('Failed to download')
+        return await msg.reply('Failed to download')
+    await msg.delete()
