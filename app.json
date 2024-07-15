@@ -11,11 +11,6 @@
     ],
     "stack": "container",
     "repository": "https://github.com/Amarnathcdj/valeri",
-    "buildpacks": [
-        {
-            "url": "heroku/python"
-        }
-    ],
     "env": {
         "TOKEN": {
             "description": "Your bot token. Get one from @BotFather duh",
