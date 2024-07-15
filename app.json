@@ -9,6 +9,7 @@
         "Shell",
         "Valerina"
     ],
+    "stack": "container",
     "repository": "https://github.com/Amarnathcdj/valeri",
     "buildpacks": [
         {
