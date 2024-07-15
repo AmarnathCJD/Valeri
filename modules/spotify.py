@@ -22,6 +22,8 @@ async def spotify(e):
     
     if out:
         await e.reply(file=out)
+        import os
+        os.remove(out)
         
     else:
         await e.reply('Failed to download')

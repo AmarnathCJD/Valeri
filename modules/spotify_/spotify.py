@@ -58,8 +58,8 @@ class Spotify:
         
         out = add_metadata(downloaded_file, output_path, track)
     
-        # os.remove(downloaded_file)
-        # os.remove(downloaded_file.replace('.ogg', ''))
+        os.remove(downloaded_file)
+        os.remove(downloaded_file.replace('.ogg', ''))
     
         if not os.path.exists(out):
             print('Error: failed to download (probably due to DRM)')
@@ -122,8 +122,8 @@ def download_song(track_id: str, output_path: str = '', access_token: str = '', 
         
     out = add_metadata(downloaded_file, output_path, track)
     
-    # os.remove(downloaded_file)
-    # os.remove(downloaded_file.replace('.ogg', ''))
+    os.remove(downloaded_file)
+    os.remove(downloaded_file.replace('.ogg', ''))
     
     if not os.path.exists(out):
         print('Error: failed to download (probably due to DRM)')
