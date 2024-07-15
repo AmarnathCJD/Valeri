@@ -1,4 +1,4 @@
-from ..spotify.spotify import Spotify
+from .spotify_.spotify import Spotify
 from ._handler import new_cmd
 
 @new_cmd(pattern='spotify')
