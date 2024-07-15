@@ -1,6 +1,6 @@
 import requests
 
-import bin.playplay_pb2 as playplay_pb2
+from .bin import playplay_pb2
 from utils import rebuild_ogg, _get_track_id, beautify_out, get_track_url
 from const import refresh_token
 
@@ -155,7 +155,7 @@ def _download_song(file_id, access_token):
     resp.ParseFromString(r.content)
 
     output = subprocess.check_output([
-        './bin/playplay',
+        './modules/spotify_/bin/playplay',
         file_id,
         resp.obfuscated_key.hex()
     ])
